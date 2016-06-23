@@ -24,7 +24,7 @@ public class NewsServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
 
-	NewsDao = new NewsDao();//³õÊ¼»¯£¬¼ÓÔØÀà
+	NewsDao = new NewsDao();//åˆå§‹åŒ–ï¼ŒåŠ è½½ç±»
     }
 
     @Override
@@ -37,7 +37,7 @@ public class NewsServlet extends HttpServlet {
 	    String newstype = request.getParameter("newstype");
 	    String newscontent = request.getParameter("newscontent");
 	    int row = NewsDao.addNews(newstitle, newstype, newscontent);
-	    response.sendRedirect("NewsServlet");//ÖØ¶¨Ïòµ½NewsServletÒ³Ãæ 
+	    response.sendRedirect("NewsServlet");//é‡å®šå‘åˆ°NewsServleté¡µé¢ 
 	} else if ("delete".equals(oprate)) {
 	    Integer Did = Integer.valueOf(request.getParameter("newsid"));
 	    //getParameter:the parameter has only one value  
@@ -45,28 +45,32 @@ public class NewsServlet extends HttpServlet {
 	    response.sendRedirect("NewsServlet");
 	} else if ("allDelete".equals(oprate)) {
 	    String[] deleteId = request.getParameterValues("deleteId");
-	    if (deleteId != null) {
+	    if (deleteId != null && !"".equals(deleteId)) {
 		//the parameter might have more than one value, use getParameterValues(java.lang.String).
 		//And getParameterValues returns a String[];
 		for (String string : deleteId) {
 		    Integer Did = Integer.valueOf(string);
 		    NewsDao.deleteNewsBYId(Did);
 		}
+	    } else {
+	
 	    }
 	    response.sendRedirect("NewsServlet");
-
 	} else if ("editStatus".equals(oprate)) {
 	    String[] editId = request.getParameterValues("deleteId");
-	    for (String string : editId) {
-		Integer Eid = Integer.valueOf(string);
-		NewsDao.changeNewsStatus(Eid);
+	    if (editId != null && !"".equals(editId)) {
+		for (String string : editId) {
+		    Integer Eid = Integer.valueOf(string);
+		    NewsDao.changeNewsStatus(Eid);
+		}
+	    } else {
+
 	    }
 	    response.sendRedirect("NewsServlet");
-
 	} else if ("toupdate".equals(oprate)) {
 	    Integer Uid = Integer.valueOf(request.getParameter("newsid"));
 	    News news = NewsDao.selectSingleNews(Uid);
-	    request.setAttribute("news", news);//request¶ÔÏóµÄsetAttribute()·½·¨½«Êı¾İnewsÉèÖÃÔÚrequest·¶Î§ÄÚ´æÈ¡
+	    request.setAttribute("news", news);//requestå¯¹è±¡çš„setAttribute()æ–¹æ³•å°†æ•°æ®newsè®¾ç½®åœ¨requestèŒƒå›´å†…å­˜å–
 	    request.getRequestDispatcher("updateNews.jsp").forward(request, response);
 	} else if ("updatenews".equals(oprate)) {
 	    Integer Uid = Integer.valueOf(request.getParameter("newsId"));
@@ -91,22 +95,22 @@ public class NewsServlet extends HttpServlet {
 	    if (pageNumber > pageCount) {
 		pageNumber = pageCount;
 	    }
-	    // µ÷ÓÃ²éÑ¯News¼¯ºÏµÄ·½·¨
+	    // è°ƒç”¨æŸ¥è¯¢Newsé›†åˆçš„æ–¹æ³•
 	    List<News> NewsList = NewsDao.getNewsList(pageNumber, pageSize);
-	    // Ìí¼Óµ½request×÷ÓÃÓòÖĞ
+	    // æ·»åŠ åˆ°requestä½œç”¨åŸŸä¸­
 	    request.setAttribute("NewsList", NewsList);
 	    request.setAttribute("pageNumber", pageNumber);
 	    request.setAttribute("pageCount", pageCount);
 	    request.setAttribute("count", count);
 
-	    // ×ª·¢µ½Ê×Ò³NewsList.jsp
+	    // è½¬å‘åˆ°é¦–é¡µNewsList.jsp
 	    request.getRequestDispatcher("NewsList.jsp").forward(request, response);
 	}
     }
 
     @Override
     public void destroy() {
-	// Ê²Ã´Ò²²»×ö
+	// ä»€ä¹ˆä¹Ÿä¸åš
     }
 
 }
